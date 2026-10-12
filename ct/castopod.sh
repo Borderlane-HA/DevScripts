@@ -36,6 +36,9 @@ function update_script() {
     exit
   fi
 
+  # Castopod appends the media folder itself, so the old default produced /media/media/
+  sed -i 's|^\(media\.baseURL="[^"]*\)/media/"$|\1/"|' /opt/castopod/.env
+
   if GITLAB_URL="https://code.castopod.org" check_for_gl_release "castopod" "adaures/castopod"; then
     msg_info "Stopping Service"
     systemctl stop caddy

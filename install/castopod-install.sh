@@ -49,7 +49,7 @@ CASTOPOD_SALT="$(openssl rand -hex 32)"
 
 cat <<EOF >/opt/castopod/.env
 app.baseURL="http://${LOCAL_IP}/"
-media.baseURL="http://${LOCAL_IP}/media/"
+media.baseURL="http://${LOCAL_IP}/"
 app.forceGlobalSecureRequests=false
 admin.gateway="cp-admin"
 auth.gateway="cp-auth"
