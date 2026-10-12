@@ -10,7 +10,6 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
-  actions: write
 
 jobs:
   move-to-main-repo:
@@ -330,15 +329,3 @@ jobs:
         run: |
           gh issue comment "$issue_nr" --body "A PR has been created for ${script_name}: community-scripts/ProxmoxVE#${pr_number}"
           gh issue edit "$issue_nr" --remove-label "Migration To ProxmoxVE" --add-label "Started Migration To ProxmoxVE"
-
-      - name: Announce migration in the Discord thread
-        if: steps.create_pull_request.outputs.pr_number
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # The label above is set with GITHUB_TOKEN and therefore raises no
-          # 'labeled' event, so the Discord workflow is dispatched explicitly.
-          gh workflow run discord-thread-lifecycle.yml \
-            --repo ${{ github.repository }} \
-            -f issue_number=${{ steps.list_issues.outputs.issue_nr }} \
-            -f mode=migrate
