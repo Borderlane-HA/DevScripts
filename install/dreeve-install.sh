@@ -48,7 +48,7 @@ msg_ok "Installed PHP Dependencies"
 msg_info "Configuring Dreeve"
 mkdir -p /opt/dreeve_data /opt/dreeve/var/{cache,log}
 DREEVE_PASSWORD=$(openssl rand -base64 18)
-DREEVE_HASH=$(/opt/frankenphp/frankenphp php-cli -r 'echo password_hash($argv[1], PASSWORD_BCRYPT, ["cost" => 13]);' -- "$DREEVE_PASSWORD")
+DREEVE_HASH=$(DREEVE_PASSWORD="$DREEVE_PASSWORD" /opt/frankenphp/frankenphp php-cli -r 'echo password_hash(getenv("DREEVE_PASSWORD"), PASSWORD_BCRYPT, ["cost" => 13]);')
 [[ "$DREEVE_HASH" =~ ^\$2y\$ ]] || {
   msg_error "Could not generate the admin password hash"
   exit 1
