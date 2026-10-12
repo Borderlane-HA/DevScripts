@@ -44,6 +44,14 @@ start
 build_container
 description
 
+msg_info "Restarting ${APP} for DietPi's first boot"
+if command -v pct &>/dev/null; then
+  pct reboot "$CTID"
+else
+  incus restart "$CTID"
+fi
+msg_ok "Restarted ${APP}"
+
 msg_ok "Completed successfully!"
 msg_custom "🚀" "${GN}" "${APP} setup has been successfully initialized!"
-echo -e "${INFO}${YW} Restart the container once, DietPi's first run setup then continues on the console.${CL}"
+echo -e "${INFO}${YW} DietPi's first run setup starts at the next console login.${CL}"
