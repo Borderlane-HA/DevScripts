@@ -34,7 +34,7 @@
   },
   "notes": [
     {
-      "text": "There is no web interface. In Firefox open about:config, set identity.sync.tokenserver.uri to http://<IP>:8000/1.0/sync/1.5, restart Firefox, then sign in to Sync. about:sync-log shows whether it talks to your server. Health check: http://<IP>:8000/__heartbeat__",
+      "text": "There is no web interface. In Firefox open about:config, set identity.sync.tokenserver.uri to http://<IP>:8000/1.0/sync/1.5, restart Firefox, then sign in to Sync. about:sync-log only lists failed syncs; set services.sync.log.appender.file.logOnSuccess to true to see successful ones too. Health check: http://<IP>:8000/__heartbeat__",
       "type": "info"
     },
     {
@@ -42,7 +42,7 @@
       "type": "info"
     },
     {
-      "text": "Firefox syncs to the storage URL this server hands out, set by SYNC_TOKENSERVER__INIT_NODE_URL in /opt/firefox-syncserver_data/.env (default http://<IP>:8000). If you use HTTPS through a reverse proxy, or the container IP changes, set it to the public origin (e.g. https://sync.example.com) before the first sign-in and point identity.sync.tokenserver.uri at that origin. It is stored in the nodes table of the syncserver database on first start; changing it later only adds a second node, so also update the existing row.",
+      "text": "Firefox syncs to the storage URL this server hands out, set by SYNC_TOKENSERVER__INIT_NODE_URL in /opt/firefox-syncserver_data/.env (default http://<IP>:8000). If you use HTTPS through a reverse proxy, or the container IP changes, set it to the public origin (e.g. https://sync.example.com), run systemctl restart firefox-syncserver and point identity.sync.tokenserver.uri at that origin.",
       "type": "warning"
     },
     {

@@ -57,6 +57,18 @@ SYNC_TOKENSERVER__FXA_OAUTH_SERVER_URL=https://oauth.accounts.firefox.com
 SYNC_TOKENSERVER__INIT_NODE_URL=http://${LOCAL_IP}:8000
 EOF
 chmod 600 /opt/firefox-syncserver_data/.env
+# The server only ever inserts INIT_NODE_URL; keep it the single node so a changed URL needs just a restart
+cat <<'EOF' >/opt/firefox-syncserver_data/nodes.sql
+SELECT to_regclass('nodes') IS NOT NULL AS ready \gset
+\if :ready
+UPDATE nodes SET node = :'url'
+ WHERE id = (SELECT min(id) FROM nodes)
+   AND NOT EXISTS (SELECT 1 FROM nodes WHERE node = :'url');
+UPDATE users SET nodeid = (SELECT id FROM nodes WHERE node = :'url')
+ WHERE nodeid <> (SELECT id FROM nodes WHERE node = :'url');
+DELETE FROM nodes WHERE node <> :'url';
+\endif
+EOF
 msg_ok "Configured Firefox Syncserver"
 
 msg_info "Creating Service"
@@ -72,6 +84,7 @@ User=root
 WorkingDirectory=/opt/firefox-syncserver
 EnvironmentFile=/opt/firefox-syncserver_data/.env
 Environment=PYTHONPATH=/opt/firefox-syncserver/.venv/lib/python3.13/site-packages
+ExecStartPre=/usr/bin/psql -1 -q -v ON_ERROR_STOP=1 -v url=\${SYNC_TOKENSERVER__INIT_NODE_URL} -f /opt/firefox-syncserver_data/nodes.sql \${SYNC_TOKENSERVER__DATABASE_URL}
 ExecStart=/usr/local/bin/syncserver
 Restart=on-failure
 RestartSec=5
