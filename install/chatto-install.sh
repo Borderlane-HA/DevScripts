@@ -21,6 +21,7 @@ mkdir -p /opt/chatto_data
 cd /opt/chatto
 $STD ./chatto init
 mv /opt/chatto/chatto.toml /opt/chatto_data/chatto.toml
+sed -i "/^\[webserver\]/,/^\[/ s|^url = .*|url = 'http://${LOCAL_IP}:4000'|" /opt/chatto_data/chatto.toml
 msg_ok "Configured Chatto"
 
 msg_info "Creating Service"
@@ -34,7 +35,6 @@ Wants=network-online.target
 Type=simple
 User=root
 WorkingDirectory=/opt/chatto
-Environment=CHATTO_WEBSERVER_URL=http://${LOCAL_IP}:4000
 Environment=CHATTO_NATS_EMBEDDED_DATA_DIR=/opt/chatto_data/data
 Environment=CHATTO_OPERATOR_API_ENABLED=true
 ExecStart=/opt/chatto/chatto run -c /opt/chatto_data/chatto.toml

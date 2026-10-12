@@ -36,6 +36,17 @@ function update_script() {
     exit
   fi
 
+  # Environment beats chatto.toml, so a URL set in the unit hid any change to webserver.url
+  if grep -q '^Environment=CHATTO_WEBSERVER_URL=' /etc/systemd/system/chatto.service; then
+    msg_info "Moving the public URL into chatto.toml"
+    url="$(sed -n 's/^Environment=CHATTO_WEBSERVER_URL=//p' /etc/systemd/system/chatto.service)"
+    sed -i "/^\[webserver\]/,/^\[/ s|^url = 'http://localhost:4000'$|url = '${url}'|" /opt/chatto_data/chatto.toml
+    sed -i '/^Environment=CHATTO_WEBSERVER_URL=/d' /etc/systemd/system/chatto.service
+    systemctl daemon-reload
+    systemctl restart chatto
+    msg_ok "Moved the public URL into chatto.toml"
+  fi
+
   if check_for_gh_release "chatto" "chattocorp/chatto"; then
     msg_info "Stopping Service"
     systemctl stop chatto
