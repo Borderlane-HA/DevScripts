@@ -20,7 +20,8 @@ $STD apt install -y \
   ca-certificates
 msg_ok "Installed Dependencies"
 
-fetch_and_deploy_gh_release "frankenphp" "php/frankenphp" "singlefile" "latest" "/opt/frankenphp" "frankenphp-linux-$(arch_resolve x86_64 aarch64)-gnu"
+# 1.13.0's php-cli shifts the script into argv[1], which breaks composer and bin/console (php/frankenphp#2690); unpin once 1.13.1 is out
+fetch_and_deploy_gh_release "frankenphp" "php/frankenphp" "singlefile" "v1.12.7" "/opt/frankenphp" "frankenphp-linux-$(arch_resolve x86_64 aarch64)-gnu"
 fetch_and_deploy_gh_release "dreeve" "dreeveapp/dreeve" "tarball"
 
 msg_info "Providing php CLI"
