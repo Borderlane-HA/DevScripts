@@ -47,11 +47,12 @@ function update_script() {
     restore_backup
 
     msg_info "Updating Pixelfed"
-    chown -R pixelfed:pixelfed /opt/pixelfed
+    cd /opt/pixelfed
     chmod -R 755 /opt/pixelfed
     chmod -R 775 /opt/pixelfed/storage /opt/pixelfed/bootstrap/cache
     export COMPOSER_ALLOW_SUPERUSER=1
     $STD composer install --no-dev --no-ansi --no-interaction --optimize-autoloader
+    chown -R pixelfed:pixelfed /opt/pixelfed
     $STD sudo -u pixelfed php artisan storage:link
     $STD sudo -u pixelfed php artisan migrate --force
     $STD sudo -u pixelfed php artisan route:cache
