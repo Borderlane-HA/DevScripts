@@ -36,15 +36,25 @@ function update_script() {
     exit
   fi
 
-  # Environment beats chatto.toml, so a URL set in the unit hid any change to webserver.url
-  if grep -q '^Environment=CHATTO_WEBSERVER_URL=' /etc/systemd/system/chatto.service; then
-    msg_info "Moving the public URL into chatto.toml"
-    url="$(sed -n 's/^Environment=CHATTO_WEBSERVER_URL=//p' /etc/systemd/system/chatto.service)"
-    sed -i "/^\[webserver\]/,/^\[/ s|^url = 'http://localhost:4000'$|url = '${url}'|" /opt/chatto_data/chatto.toml
-    sed -i '/^Environment=CHATTO_WEBSERVER_URL=/d' /etc/systemd/system/chatto.service
+  # Environment beats chatto.toml; the unit's data_dir is where the store is, a URL edited in the file stays
+  local unit=/etc/systemd/system/chatto.service toml=/opt/chatto_data/chatto.toml url data_dir
+  if grep -q '^Environment=CHATTO_' "$unit"; then
+    msg_info "Moving the service settings into chatto.toml"
+    url="$(sed -n 's/^Environment=CHATTO_WEBSERVER_URL=//p' "$unit")"
+    data_dir="$(sed -n 's/^Environment=CHATTO_NATS_EMBEDDED_DATA_DIR=//p' "$unit")"
+    if [[ -n "$url" ]]; then
+      sed -i "/^\[webserver\]/,/^\[/ s|^url = 'http://localhost:4000'$|url = '${url}'|" "$toml"
+    fi
+    if [[ -n "$data_dir" ]]; then
+      sed -i "/^\[nats.embedded\]/,/^\[/ s|^data_dir = .*|data_dir = '${data_dir}'|" "$toml"
+    fi
+    if grep -q '^Environment=CHATTO_OPERATOR_API_ENABLED=true$' "$unit"; then
+      sed -i '/^# \[operator_api\]$/,/^$/ { s|^# \[operator_api\]$|[operator_api]|; s|^# enabled = false$|enabled = true| }' "$toml"
+    fi
+    sed -i '/^Environment=CHATTO_/d' "$unit"
     systemctl daemon-reload
     systemctl restart chatto
-    msg_ok "Moved the public URL into chatto.toml"
+    msg_ok "Moved the service settings into chatto.toml"
   fi
 
   if check_for_gh_release "chatto" "chattocorp/chatto"; then
