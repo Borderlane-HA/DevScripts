@@ -20,7 +20,6 @@ msg_info "Setting up Lidify"
 $STD uv venv --python 3.12 /opt/lidify/.venv
 $STD uv pip install --python /opt/lidify/.venv/bin/python -r /opt/lidify/requirements.txt
 install -d -m 700 /opt/lidify/config
-# Lidify lets environment variables override the settings saved in the web UI, so keep its settings out of this file
 cat <<EOF >/opt/lidify/.env
 RELEASE_VERSION=$(cat ~/.lidify)
 EOF

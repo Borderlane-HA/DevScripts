@@ -12,6 +12,9 @@
   "documentation": "https://github.com/TheWicklowWolf/Lidify#readme",
   "website": "https://github.com/TheWicklowWolf/Lidify",
   "repository": "https://github.com/TheWicklowWolf/Lidify",
+  "architectures": [
+    "amd64"
+  ],
   "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/lidify.webp",
   "description": "Lidify is a music discovery tool for Lidarr. It reads your existing Lidarr artists and uses Last.fm, Spotify or MusicBrainz to suggest similar artists, which can then be added straight back into Lidarr from the web UI.",
   "install_methods": [
