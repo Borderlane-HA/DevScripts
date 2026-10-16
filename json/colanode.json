@@ -35,10 +35,6 @@
     },
     "notes": [
         {
-            "text": "Before using the web app, import https://<IP>:4000/colanode.crt into your browser as a trusted CA. Its service worker and local storage do not work without it.",
-            "type": "info"
-        },
-        {
             "text": "There is no default account: register one in the web UI on first access.",
             "type": "info"
         }

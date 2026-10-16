@@ -17,7 +17,7 @@
   "website": "https://youtarr.com/",
   "repository": "https://github.com/DialmasterOrg/Youtarr",
   "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/youtarr.webp",
-  "description": "Youtarr is a self-hosted YouTube downloader that subscribes to channels and playlists and downloads new videos on a schedule with yt-dlp. Videos are organized per channel with NFO files, posters and embedded MP4 metadata, so they show up cleanly in Plex, Jellyfin, Emby or Kodi. It also mirrors playlists into those servers, syncs watch status back, supports SponsorBlock and age, space or watched-based cleanup, and plays videos in its own web UI.",
+  "description": "Youtarr is a self-hosted YouTube downloader that subscribes to channels and playlists and downloads new videos on a schedule with yt-dlp. It adds NFO files, posters and metadata so the videos show up cleanly in Plex, Jellyfin, Emby or Kodi.",
   "install_methods": [
     {
       "type": "default",
@@ -38,15 +38,11 @@
   },
   "notes": [
     {
-      "text": "There is no default login. On first start Youtarr writes a one-time setup token to /opt/youtarr_data/config/setup-token (also shown in journalctl -u youtarr). Open the web UI, paste the token and create the admin account.",
-      "type": "warning"
-    },
-    {
-      "text": "Videos are downloaded to /opt/youtarr_data/videos (DATA_PATH in /opt/youtarr_data/.env). To store them on a NAS or share them with Plex, Jellyfin or Emby, bind-mount the media folder there, e.g. pct set <CTID> -mp0 /mnt/media/youtube,mp=/opt/youtarr_data/videos, then restart the container. In an unprivileged container the host folder must be writable by UID 100000.",
+      "text": "There is no default login: paste the one-time token from /opt/youtarr_data/config/setup-token into the web UI and create the admin account.",
       "type": "info"
     },
     {
-      "text": "Settings live in /opt/youtarr_data/config/config.json (edited through the web UI), database credentials in /opt/youtarr_data/.env. Both survive updates. Running update also refreshes yt-dlp; Youtarr can additionally auto-update it from its settings.",
+      "text": "To keep videos on a NAS or share them with Plex or Jellyfin, mount that folder at /opt/youtarr_data/videos (pct set <CTID> -mp0 /host/path,mp=/opt/youtarr_data/videos). The host folder must be writable by UID 100000.",
       "type": "info"
     }
   ]

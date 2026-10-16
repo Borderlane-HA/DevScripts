@@ -40,10 +40,6 @@
     {
       "text": "Without a passed-through GPU everything renders in software, which works but is slow. For Android apps on a Linux host, waydroid-vm is the lighter option.",
       "type": "info"
-    },
-    {
-      "text": "The VM boots an installer: in the console choose Installation, create and format a partition on sda, and say yes to GRUB and a writable /system.",
-      "type": "info"
     }
   ]
 }
