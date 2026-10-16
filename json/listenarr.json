@@ -37,23 +37,15 @@
   },
   "notes": [
     {
-      "text": "Listenarr only publishes canary builds, all flagged as GitHub pre-releases. This script installs and updates from that channel, so expect breaking changes and keep backups of /opt/listenarr_data.",
+      "text": "There is no login on first start. Turn it on and create the admin account under Settings > General > Authentication, or keep Listenarr on a trusted network.",
       "type": "warning"
     },
     {
-      "text": "Authentication is disabled on first start. Turn on the login screen and create the admin account under Settings > General > Authentication, or keep the container on a trusted network.",
+      "text": "Listenarr only publishes canary pre-releases, and this script installs and updates from them. Expect breaking changes and keep backups of /opt/listenarr_data.",
       "type": "warning"
     },
     {
-      "text": "Only amd64 is supported: upstream ships no arm64 build.",
-      "type": "info"
-    },
-    {
-      "text": "Add a download client (qBittorrent, Transmission, SABnzbd or NZBGet) under Settings > Download Clients, then add Torznab/Newznab indexers under Settings > Indexers or import them from Prowlarr. If the download client runs in another container, mount its download folder here and set a remote path mapping.",
-      "type": "info"
-    },
-    {
-      "text": "Settings, database, logs and image cache live in /opt/listenarr_data/config. On first start Listenarr downloads its own ffprobe into that folder.",
+      "text": "If your download client runs in another container, mount its download folder here and set a remote path mapping in Listenarr.",
       "type": "info"
     }
   ]
