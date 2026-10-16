@@ -35,7 +35,7 @@
   },
   "notes": [
     {
-      "text": "Dreeve needs Strava credentials: create an API application at https://www.strava.com/settings/api, put STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET and STRAVA_REFRESH_TOKEN into /opt/dreeve/.env.local and run systemctl restart dreeve.",
+      "text": "Create a Strava API application at https://www.strava.com/settings/api, put STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET and STRAVA_REFRESH_TOKEN into /opt/dreeve/.env.local and run systemctl restart dreeve.",
       "type": "info"
     },
     {
