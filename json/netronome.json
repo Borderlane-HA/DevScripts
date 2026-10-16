@@ -1,0 +1,70 @@
+{
+  "name": "Netronome",
+  "slug": "netronome",
+  "categories": [
+    4,
+    9
+  ],
+  "date_created": "2026-10-16",
+  "type": "ct",
+  "updateable": true,
+  "privileged": false,
+  "architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "interface_port": 7575,
+  "documentation": "https://netrono.me/",
+  "website": "https://netrono.me/",
+  "repository": "https://github.com/autobrr/netronome",
+  "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/netronome.webp",
+  "description": "Netronome is a network speed testing and monitoring tool with a web interface. It runs speed tests against Speedtest.net, LibreSpeed and your own iperf3 servers, on demand or on a schedule, traces routes, watches packet loss with MTR or ping and the response time of DNS resolvers, and collects bandwidth, CPU, memory, disk and temperature data from agents on your servers. When a value crosses a limit it notifies you through Shoutrrr (Discord, ntfy, Gotify, email and more). This script installs the upstream .deb, a single Go binary with the web interface built in, together with iperf3, librespeed-cli, traceroute and mtr, and keeps the configuration and the SQLite database in /opt/netronome_data.",
+  "install_methods": [
+    {
+      "type": "default",
+      "script": "ct/netronome.sh",
+      "config_path": "/opt/netronome_data/config.toml",
+      "resources": {
+        "cpu": 2,
+        "ram": 512,
+        "hdd": 4,
+        "os": "Debian",
+        "version": "13"
+      }
+    }
+  ],
+  "default_credentials": {
+    "username": null,
+    "password": null
+  },
+  "notes": [
+    {
+      "text": "Netronome has no default login. On the first visit to http://<IP>:7575 it shows a registration page; the account created there is the only one it accepts, and registration closes after it. Until then anyone who can reach the port can claim it, so create yours right after the install. Further accounts and password resets work in the container console: netronome create-user <name> and netronome change-password <name> (both ask for the password, or read it from standard input).",
+      "type": "warning"
+    },
+    {
+      "text": "/opt/netronome_data holds config.toml (with the session secret that signs logins), the SQLite database netronome.db with its -wal and -shm files, and after a theme license activation its .device-id; back up the whole folder. /root/.config/netronome points there, so the CLI commands from the upstream documentation find this configuration without --config. Updates install the new .deb, which only replaces /usr/bin/netronome, and also update librespeed-cli.",
+      "type": "info"
+    },
+    {
+      "text": "All test types work out of the box: Speedtest.net is built in, LibreSpeed uses librespeed-cli, the Traceroute tab uses traceroute, and packet loss monitors use mtr for per-hop results. An iperf3 test needs an iperf3 server to test against: run iperf3 -s on another host and add it under Speed Test > iperf3 > Add. Your own LibreSpeed servers go in /opt/netronome_data/librespeed-servers.json.",
+      "type": "info"
+    },
+    {
+      "text": "Netronome runs as root, which keeps CAP_NET_RAW in an unprivileged container, so ping, MTR in ICMP mode and the packet loss monitors work without setcap or a privileged container. Should the capability be dropped, MTR fails and the monitors fall back to unprivileged ping without per-hop data, which needs net.ipv4.ping_group_range to include group 0.",
+      "type": "info"
+    },
+    {
+      "text": "To watch other machines, run the agent there, not in this container: install vnstat on the host, then run curl -sL https://netrono.me/install-agent | sudo bash, which installs netronome agent as a service on port 8200 and prints its URL and API key; add those on the Agents tab. The installer offers a daily auto-update timer that pipes the install script from GitHub into bash as root; decline it if you would rather update agents yourself.",
+      "type": "info"
+    },
+    {
+      "text": "Port 7575 is plain HTTP, and /api/speedtest/public/history lists your speed test results without a login. For access beyond your LAN, put a reverse proxy with TLS in front; if you use the IP whitelist in config.toml behind it, add the proxy's address to trusted_proxies. OpenID Connect sign-in is set up by uncommenting [oidc] in config.toml (redirect URL https://<host>/api/auth/oidc/callback), followed by systemctl restart netronome.",
+      "type": "warning"
+    },
+    {
+      "text": "Netronome keeps every result until you delete it under Settings > Data > Purge History. It also supports PostgreSQL ([database] in config.toml), which this script does not set up; switching starts with an empty database. Netronome uses about 55 MB of RAM when idle.",
+      "type": "info"
+    }
+  ]
+}
