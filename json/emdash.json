@@ -1,0 +1,99 @@
+{
+  "name": "EmDash",
+  "slug": "emdash",
+  "categories": [
+    21
+  ],
+  "date_created": "2026-10-16",
+  "type": "ct",
+  "updateable": true,
+  "privileged": false,
+  "architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "interface_port": 4321,
+  "documentation": "https://docs.emdashcms.com/",
+  "website": "https://emdashcms.com/",
+  "repository": "https://github.com/emdash-cms/emdash",
+  "logo": "https://cdn.jsdelivr.net/gh/emdash-cms/emdash@main/docs/public/favicon.svg",
+  "description": "EmDash is a full-stack TypeScript CMS built on Astro and meant as a modern successor to WordPress. It brings an admin panel with a visual schema builder, a media library, menus, widgets, revisions and scheduled publishing, stores rich text as structured Portable Text, runs plugins in sandboxes with declared capabilities, imports WordPress sites and ships an MCP server for AI tools. This script creates a site from one of the Node.js templates with upstream's create-emdash, builds it against the published packages and runs it on Node.js with SQLite and local media storage.",
+  "install_methods": [
+    {
+      "type": "default",
+      "script": "ct/emdash.sh",
+      "config_path": "/opt/emdash_data/.env",
+      "resources": {
+        "cpu": 2,
+        "ram": 3072,
+        "hdd": 6,
+        "os": "Debian",
+        "version": "13"
+      }
+    }
+  ],
+  "default_credentials": {
+    "username": null,
+    "password": null
+  },
+  "app_vars": [
+    {
+      "name": "var_emdash_url",
+      "label": "Public URL",
+      "type": "text",
+      "default": "",
+      "help": "The full address visitors and the admin will use, e.g. https://blog.example.com. Passkey sign-in needs HTTPS on a domain. Empty means http://<IP>:4321"
+    },
+    {
+      "name": "var_emdash_template",
+      "label": "Site Template",
+      "type": "select",
+      "options": [
+        "blog",
+        "starter",
+        "marketing",
+        "portfolio"
+      ],
+      "default": "blog",
+      "help": "The starting design and sample content. It cannot be switched later, because the template becomes the site's own code"
+    }
+  ],
+  "notes": [
+    {
+      "text": "The admin at /_emdash/admin signs in with passkeys only; there are no passwords. Browsers offer passkeys only on HTTPS under a hostname or on localhost, never on an IP address, with or without a self-signed certificate. http://<IP>:4321 serves the public site, but the setup wizard cannot create the first account there.",
+      "type": "warning"
+    },
+    {
+      "text": "To set EmDash up for real, put it behind a reverse proxy or tunnel with a trusted certificate (Caddy, Nginx Proxy Manager, Traefik, Cloudflare Tunnel) that forwards to http://<IP>:4321, set EMDASH_SITE_URL in /opt/emdash_data/.env to that address (e.g. https://blog.example.com), then rebuild: cd /opt/emdash && set -a && . /opt/emdash_data/.env && set +a && pnpm build && systemctl restart emdash. Open https://blog.example.com/_emdash/admin and create your account; the first one becomes the administrator. Setting var_emdash_url at install time skips the rebuild.",
+      "type": "info"
+    },
+    {
+      "text": "To try EmDash without a domain, set EMDASH_SITE_URL=http://localhost:4321, rebuild as above, run ssh -L 4321:localhost:4321 root@<IP> on your computer and open http://localhost:4321/_emdash/admin. While the site URL is localhost, links and images on the public site point there too. Passkeys made there only work at localhost: when you move to a domain, stay signed in at localhost, switch EMDASH_SITE_URL and rebuild, then use Settings > General > Continue on <domain> to add a passkey for the new address.",
+      "type": "info"
+    },
+    {
+      "text": "EMDASH_SITE_URL must be exactly the address in the browser bar, because passkeys are bound to its hostname. Extra hostnames under the same domain go in EMDASH_ALLOWED_ORIGINS (comma-separated). Behind a reverse proxy, also set EMDASH_TRUSTED_PROXY_HEADERS=x-forwarded-for once only the proxy can reach port 4321: without it EmDash on Node.js cannot see client addresses and skips the per-IP rate limits on sign-in, magic-link and signup requests.",
+      "type": "info"
+    },
+    {
+      "text": "/opt/emdash is your Astro project: the template's layouts, components and astro.config.mjs are yours to change, and a rebuild (command above) applies the changes. Updates only move the emdash package to the new release and rebuild; they never replace template files, so new template designs do not reach existing sites.",
+      "type": "info"
+    },
+    {
+      "text": "The SQLite database, the uploaded media and the .env with EMDASH_ENCRYPTION_KEY live in /opt/emdash_data, outside the site; back up that folder. Without the key, plugin secrets saved in the database cannot be decrypted.",
+      "type": "info"
+    },
+    {
+      "text": "Updates follow the emdash@x.y.z releases; the repository tags every plugin as well. Core database migrations run on the first request after the update. Before an update across a major version, take a backup or snapshot and read the release notes: they can require changes to your site's own code, which the update does not make.",
+      "type": "warning"
+    },
+    {
+      "text": "Magic-link sign-in, invitations and account recovery need an email provider plugin (e.g. emdash-smtp, see the Email Setup guide). Without one, invitation links have to be copied from the Users page.",
+      "type": "info"
+    },
+    {
+      "text": "Install and every update build the site with Astro, which peaks at about 2.3 GB of RAM; with 2 GB the build only fits by swapping. The running site needs about 160 MB.",
+      "type": "info"
+    }
+  ]
+}
